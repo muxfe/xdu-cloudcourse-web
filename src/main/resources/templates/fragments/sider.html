@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<nav th:fragment="sider" class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+    <ul class="nav nav-pills flex-column">
+        <li class="nav-item">
+            <a class="nav-link" 
+               th:href="@{/}" 
+               th:classappend="${title} == '项目介绍' ? 'active' : ''">项目介绍</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" 
+               th:href="@{/record}" 
+               th:classappend="${title} == '过车统计' ? 'active' : ''">过车统计</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" 
+               th:href="@{/track}" 
+               th:classappend="${title} == '轨迹重现' ? 'active' : ''">轨迹重现</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" 
+               th:href="@{/alarm}" 
+               th:classappend="${title} == '实时报警' ? 'active' : ''">实时报警</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:href="@{/bmap}"
+               th:classappend="${title} == '百度地图示例' ? 'active' : ''">百度地图示例</a>
+        </li>
+    </ul>
+</nav>
+</body>
+</html>

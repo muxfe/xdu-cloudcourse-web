@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="text/html;charset=UTF-8"/>
+    <title th:text="${title}"></title>
+    <div th:replace="fragments/header :: css"></div>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sider :: sider"></div>
+        <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+            <h1>项目介绍</h1>
+            <p>看到这个页面，恭喜你已经成功部署和启动了 Web 部分的程序，这里有一个基本的<a th:href="@{/record}">过车统计</a>的示例，包含前后端代码实现。</p>
+            <p>动手能力强的同学可以参照此功能做出加分项功能，分别为<a th:href="@{/track}">轨迹重现</a>和<a th:href="@{/alarm}">实时报警</a>。</p>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/header :: js"></div>
+</body>
+</html>

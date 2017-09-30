@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="text/html;charset=UTF-8"/>
+    <title th:text="${title}"></title>
+    <div th:replace="fragments/header :: css"></div>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sider :: sider"></div>
+        <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+            <h1 th:text="${title}"></h1>
+            <div>
+                <form class="form-inline mt-2 mt-md-0 mb-md-2" th:action="@{/record}" method="post">
+                    <input class="form-control mr-sm-2" name="placeId" placeholder="placeId" th:value="${condition.getPlaceId()}" />
+                    &nbsp;and&nbsp;&nbsp; 
+                    <input class="form-control mr-sm-2" name="eid" placeholder="EID" th:value="${condition.getEid()}" />
+                    &nbsp;and&nbsp;&nbsp;
+                    <input class="form-control mr-sm-2" name="time" placeholder="Time" th:value="${condition.getTime()}" />
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">查询</button>
+                </form>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>EID</th>
+                            <th>PlaceID</th>
+                            <th>Time</th>
+                            <th>Address</th>
+                            <th>Longitude</th>
+                            <th>Latitude</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="record : ${recordList}">
+                            <td></td>
+                            <td th:text="${record.getEid()}"></td>
+                            <td th:text="${record.getPlaceId()}"></td>
+                            <td th:text="${record.getTime()}"></td>
+                            <td th:text="${record.getAddress()}"></td>
+                            <td th:text="${record.getLongitude()}"></td>
+                            <td th:text="${record.getLatitude()}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div th:replace="fragments/header :: js"></div>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="text/html;charset=UTF-8"/>
+    <title th:text="${title}"></title>
+    <div th:replace="fragments/header :: css"></div>
+    <link rel="stylesheet" th:href="@{http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.css}" />
+    <style>
+        #mapHolder {
+            flex: 1;
+        }
+        .map-controlls {
+            height: 120px;
+            background: #222;
+        }
+        .BMap_Marker > div > img {
+            width: 25px;
+            height: 25px;
+        }
+        .BMap_bubble_content > img {
+            padding: 10px;
+            height: 200px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sider :: sider"></div>
+        <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+            <h1 th:text="${title}"></h1>
+            <div>
+                <form class="form-inline mt-2 mt-md-0 mb-md-2">
+                    <input class="form-control mr-sm-2" name="placeId" placeholder="placeId" />
+                    &nbsp;and&nbsp;&nbsp;
+                    <input class="form-control mr-sm-2" name="eid" placeholder="EID" />
+                    &nbsp;and&nbsp;&nbsp;
+                    <input class="form-control mr-sm-2" name="time" placeholder="Time" />
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">查询</button>
+                </form>
+            </div>
+            <div>
+                <div style="width:1080px;height:540px;" id="mapHolder"></div>
+            </div>
+        </main>
+        <img style="display:none;" id="tecIcon" th:src="@{assets/images/tec.png}" alt="机具"/>
+    </div>
+</div>
+
+<div th:replace="fragments/header :: js"></div>
+<script th:src="@{http://api.map.baidu.com/api?v=2.0&amp;ak=eGgfhshrvZANxKGXHKfaGK3YBWcXOgYN&amp;callback=mapOnLoad}"></script>
+<script>
+    // 百度地图实例
+    var map;
+    // 绘图工具实例
+    var drawingManager;
+    // 覆盖物图标地址
+    var iconSrc = $('#tecIcon').attr('src');
+    // 绘图工具样式
+    const styleOptions = {
+        strokeColor: 'blue',
+        fillColor: 'blue',
+        strokeWeight: 3,
+        strokeDasharray: 'none',
+        strokeOpacity: 0.2,
+        fillOpacity: 0.1,
+        strokeStyle: 'solid',
+    };
+    // 绘图完成触发的事件
+    const overlayComplete = function (e) {
+        const overlay = e.overlay;
+        drawingManager.close();
+        console.log('You draw a shape.');
+    };
+    // 覆盖物弹出信息窗口设置
+    const markerInfoOptions = {
+        width: 300,
+        height: 100,
+        title: '车辆经过信息'
+    };
+    ////////////////////////////////////////////////////////////
+    // 测试示例
+    const markerExample = {
+        longitude: 108.924257,
+        latitude: 34.235873,
+        id: '123456789',
+        time: new Date().toISOString().replace('T', ' ').slice(0, 19),
+        address: '西安电子科技大学太白校区新科技楼'
+    };
+    ////////////////////////////////////////////////////////////
+    
+    // 加载百度地图js文件后的回调函数
+    function mapOnLoad() {
+        map = new BMap.Map('mapHolder', { enableMapClick: false });
+        // 设置地图中心点和缩放比例
+        map.centerAndZoom(new BMap.Point(108.924257, 34.235873), 13);
+        // 设置允许使用鼠标滚轮缩放地图比例
+        map.enableScrollWheelZoom(true);
+        // 待百度地图api加载完成后，再加载绘图工具js
+        loadScript('http://api.map.baidu.com/library/DrawingManager/1.4/src/DrawingManager_min.js');
+        // 使用异步方法，确保绘图工具js执行后再行初始化
+        setTimeout(function () {
+            //////////////////////////////////
+            // 测试点位
+            addMarker(markerExample);
+            //////////////////////////////////
+            
+            initDrawingManager();
+        }, 1000);
+    }
+    
+    // 向地图实例中添加覆盖物，参数为经纬度（类型Number）
+    function addMarker(item) {
+        var point = new BMap.Point(item.longitude, item.latitude);
+        // 自定义覆盖物图标，默认为红点
+        var myIcon = new BMap.Icon(iconSrc, new BMap.Size(50, 50), {
+            offset: new BMap.Size(0, 0),
+            imageOffset: new BMap.Size(0, 0)
+        });
+        var marker = new BMap.Marker(point, { icon: myIcon });
+        map.addOverlay(marker);
+        
+        marker.addEventListener('click', function () {
+            const infoWindow = new BMap.InfoWindow(
+                '经过设备编号：' + item.id + '<br/>' +
+                '经过时间：' + item.time + '<br/>' +
+                '经过地址：' + item.address,
+                markerInfoOptions
+            );
+            map.openInfoWindow(infoWindow, point);
+        });
+    }
+
+    // 初始化绘图工具
+    function initDrawingManager() {
+        try {
+            drawingManager = new BMapLib.DrawingManager(map, {
+                isOpen: false,
+                enableDrawingTool: true,
+                drawingToolOptions: {
+                    anchor: BMAP_ANCHOR_TOP_RIGHT, // 绘图工具放置位置，如此处为左上角
+                    offset: new BMap.Size(5, 5), // 绘图工具偏移值
+                    drawingModes: [
+                        BMAP_DRAWING_CIRCLE, // 画圆
+                        BMAP_DRAWING_RECTANGLE // 画矩形
+                    ]
+                },
+                circleOptions: styleOptions,
+                polygonOptions: styleOptions,
+                rectangleOptions: styleOptions
+            });
+            // 绑定绘图完成后的事件
+            drawingManager.addEventListener('overlaycomplete', overlayComplete);
+        } catch (e) {
+            // 如异步加载导致上面的代码执行失败，可等1s后重试
+            setTimeout(function () {
+                initDrawingManager();
+            }, 1000);
+        }
+    }
+    
+    // 加载js资源
+    function loadScript(src, async) {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = !!async; // 是否异步加载
+        document.body.appendChild(script);
+    }
+</script>
+</body>
+</html>
