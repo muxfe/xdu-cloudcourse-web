@@ -1,6 +1,6 @@
 # xdu-cloudcourse-web
 
-[![Build Status][build-badge]][build-status]
+[![Build Status](https://travis-ci.org/muxfe/xdu-cloudcourse-web.svg?branch=master)](https://travis-ci.org/muxfe/xdu-cloudcourse-web.svg?branch=master)
 
 2017
 
