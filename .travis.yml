@@ -1,0 +1,10 @@
+lanaguage: java
+
+jdk:
+  - oraclejdk8
+  
+cache:
+  directories:
+    - $HOME/.mvn/.wrapper
+    
+

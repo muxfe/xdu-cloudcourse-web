@@ -1,5 +1,7 @@
 # xdu-cloudcourse-web
 
+[![Build Status][build-badge]][build-status]
+
 2017
 
 西电云计算课程大作业Web端代码示例及简易文档教程。
